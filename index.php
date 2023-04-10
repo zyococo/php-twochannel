@@ -14,7 +14,7 @@ $res = null;
 
 //データベース接続
 try {
-    $pdo = new PDO('mysql:charset=UTF8;dbname=test-board;host=localhost', 'root', 'root');
+    $pdo = new PDO('mysql:charset=UTF8;dbname=php-twochannel;host=localhost', 'root', 'root');
 } catch (PDOException $e) {
     //接続エラーのときエラー内容を取得する
     $error_message[] = $e->getMessage();
