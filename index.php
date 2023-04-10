@@ -2,7 +2,7 @@
 date_default_timezone_set("Asia/Tokyo");
 
 //変数の初期化
-$current_date = null;
+$postDate = null;
 $message = array();
 $message_array = array();
 $success_message = null;
@@ -14,7 +14,7 @@ $res = null;
 
 //データベース接続
 try {
-    $pdo = new PDO('mysql:charset=UTF8;dbname=php-twochannel;host=localhost', 'root', 'root');
+    $pdo = new PDO('mysql:charset=UTF8;dbname=php_twochannel;host=localhost', 'root', 'root');
 } catch (PDOException $e) {
     //接続エラーのときエラー内容を取得する
     $error_message[] = $e->getMessage();
@@ -43,20 +43,20 @@ if (!empty($_POST["submitButton"])) {
         // var_dump($_POST);
 
         //ここからDB追加のときに追加
-        $current_date = date("Y-m-d H:i:s");
+        $postDate = date("Y-m-d H:i:s");
 
-        //トランザクション開始
+        // トランザクション開始
         $pdo->beginTransaction();
 
         try {
 
             //SQL作成
-            $statment = $pdo->prepare("INSERT INTO comment (username, comment, post_date) VALUES (:username, :comment, :current_date)");
+            $statment = $pdo->prepare("INSERT INTO `php_twochannel_tables` (`username`, `comment`, `postDate`) VALUES (:username,:comment,:postDate);");
 
             //値をセット
-            $statment->bindParam(':username', $escaped["username"], PDO::PARAM_STR);
-            $statment->bindParam(':comment', $escaped["comment"], PDO::PARAM_STR);
-            $statment->bindParam(':current_date', $current_date, PDO::PARAM_STR);
+            $statment->bindParam(':username', $escaped['username'] , PDO::PARAM_STR);
+            $statment->bindParam(':comment', $escaped['comment'], PDO::PARAM_STR);
+            $statment->bindParam(':postDate', $postDate, PDO::PARAM_STR);
 
             //SQLクエリの実行
             $res = $statment->execute();
@@ -80,7 +80,7 @@ if (!empty($_POST["submitButton"])) {
 
 
 //DBからコメントデータを取得する
-$sql = "SELECT username, comment, post_date FROM comment ORDER BY post_date ASC";
+$sql = "SELECT username, comment, postDate FROM php_twochannel_tables ORDER BY postDate ASC";
 $message_array = $pdo->query($sql);
 
 
@@ -122,7 +122,7 @@ $pdo = null;
                             <div class="nameArea">
                                 <span>名前：</span>
                                 <p class="username"><?php echo $value['username'] ?></p>
-                                <time>：<?php echo date('Y/m/d H:i', strtotime($value['post_date'])); ?></time>
+                                <time>：<?php echo date('Y/m/d H:i', strtotime($value['postDate'])); ?></time>
                             </div>
                             <p class="comment"><?php echo $value['comment']; ?></p>
                         </div>
